@@ -20,50 +20,34 @@ namespace TCC_Ana
             CreateHostBuilder(args).Build().Run();
         }
 
-        //public static IHostBuilder CreateHostBuilder(string[] args) =>
-        //    Host.CreateDefaultBuilder(args)
-        //        .ConfigureWebHostDefaults(webBuilder =>
-        //        {
-        //            webBuilder.UseStartup<Startup>();
-        //        })
-        //        .ConfigureAppConfiguration((context, config) =>
-        //        {
-        //            var settings = config.Build();
-        //            var keyVaultEndpoint = settings["VaultUri"];
-
-        //            var keyVaultClient = new KeyVaultClient(async (authority, resource, scope) =>
-        //            {
-        //                var credentials = new DefaultAzureCredential(false);
-        //                var token = credentials.GetToken(
-        //                    new TokenRequestContext(
-        //                        new[] { "https://vault.azure.net/.default" }));
-
-        //                return token.Token; 
-
-        //            });
-
-        //            config.AddAzureKeyVault(keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
-
-
-        //        });
-
-
-
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, config) =>
-            {
-                var settings = config.Build();
-                var keyVaultEndpoint = settings["VaultUri"];
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    var settings = config.Build();
+                    var keyVaultEndpoint = settings["VaultUri"];
 
-                config.AddAzureKeyVault(keyVaultEndpoint, new DefaultKeyVaultSecretManager());
+                    var keyVaultClient = new KeyVaultClient(async (authority, resource, scope) =>
+                    {
+                        var credentials = new DefaultAzureCredential(false);
+                        var token = credentials.GetToken(
+                            new TokenRequestContext(
+                                new[] { "https://vault.azure.net/.default" }));
+
+                        return token.Token;
+
+                    });
+
+                    config.AddAzureKeyVault(keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
 
 
-            })
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+                }
+        );
+        
     }
 }
     
