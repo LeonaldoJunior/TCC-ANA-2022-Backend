@@ -16,7 +16,7 @@ namespace TCC_Ana.DataModels
             _configuration = iConfig;
         }
 
-        DbSet<EndDeviceDb> EndDevices { get; set; }
+        public DbSet<EndDeviceDb> EndDevices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

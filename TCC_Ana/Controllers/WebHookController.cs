@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using TCC_Ana.DataModels;
+using System.Linq;
 
 namespace TCC_Ana.Controllers
 {
@@ -22,6 +23,24 @@ namespace TCC_Ana.Controllers
             return Ok(_configuration.GetValue<string>("LeonaldoTest"));
             //return Ok(VaultClient.GetSecret("LeonaldoTest").Value.Value);
 
+        }
+
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(string id)
+        {
+            using Context myContext = new Context(_configuration);
+
+
+
+
+            // Will hit the database
+            var events = myContext.EndDevices.Where(s => s.EndDeviceId == id).ToList();
+
+
+
+
+            return Ok(events);
         }
 
         // POST: WebHookController/
