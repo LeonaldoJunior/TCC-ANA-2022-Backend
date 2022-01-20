@@ -20,9 +20,11 @@ namespace TCC_Ana.DataModels
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectiontring = _configuration.GetValue<string>("kv-connectionstring-db-tcc-ana");
+            //string connectiontring = _configuration.GetValue<string>("kv-connectionstring-db-tcc-ana");
 
-            optionsBuilder.UseSqlServer(connectiontring);
+            //optionsBuilder.UseSqlServer(connectiontring);
+            optionsBuilder.UseSqlServer("Data Source=mssqlaconnect.itmnetworks.net;Initial Catalog=1307_tcc_ana;Persist Security Info=True;User ID=1307_leonaldo;Password=Uq4amivb[w");
         }
+
     }
 }

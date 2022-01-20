@@ -43,6 +43,10 @@ namespace TCC_Ana
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TCC_Ana v1"));
             }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
 
             app.UseHttpsRedirection();
 

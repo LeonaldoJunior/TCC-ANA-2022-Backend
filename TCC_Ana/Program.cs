@@ -25,28 +25,28 @@ namespace TCC_Ana
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                })
-                .ConfigureAppConfiguration((context, config) =>
-                {
-                    var settings = config.Build();
-                    var keyVaultEndpoint = settings["VaultUri"];
+                });
+                //.ConfigureAppConfiguration((context, config) =>
+                //{
+                //    var settings = config.Build();
+                //    var keyVaultEndpoint = settings["VaultUri"];
 
-                    var keyVaultClient = new KeyVaultClient(async (authority, resource, scope) =>
-                    {
-                        var credentials = new DefaultAzureCredential(false);
-                        var token = credentials.GetToken(
-                            new TokenRequestContext(
-                                new[] { "https://vault.azure.net/.default" }));
+                //    var keyVaultClient = new KeyVaultClient(async (authority, resource, scope) =>
+                //    {
+                //        var credentials = new DefaultAzureCredential(false);
+                //        var token = credentials.GetToken(
+                //            new TokenRequestContext(
+                //                new[] { "https://vault.azure.net/.default" }));
 
-                        return token.Token;
+                //        return token.Token;
 
-                    });
+                //    });
 
-                    config.AddAzureKeyVault(keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
+                //    config.AddAzureKeyVault(keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
 
 
-                }
-        );
+                //}
+                //);
         
     }
 }

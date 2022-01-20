@@ -26,26 +26,23 @@ namespace TCC_Ana.Controllers
         }
 
 
-        [HttpGet("{id}")]
-        public IActionResult GetById(string id)
+        [HttpGet("GetByIdMax/{id}")]
+        public IActionResult GetByIdMax(string id)
         {
             using Context myContext = new Context(_configuration);
 
+            //var events = myContext.EndDevices.Where(s => s.EndDeviceId == id).ToList();
+            //var events = myContext.EndDevices.Select(s => s.FirstOrDefault(w => w.));
+
+            var maxEvent = myContext.EndDevices.OrderByDescending(p => p.EventId).FirstOrDefault(x =>x.EndDeviceId == id);
 
 
-
-            // Will hit the database
-            var events = myContext.EndDevices.Where(s => s.EndDeviceId == id).ToList();
-
-
-
-
-            return Ok(events);
+            return Ok(maxEvent);
         }
 
         // POST: WebHookController/
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] EndDeviceEvent endDeviceEvent)
+        public IActionResult Post([FromBody] EndDeviceEvent endDeviceEvent)
         //public async Task<IActionResult> Post()
         {
             using Context myContext = new Context(_configuration);
