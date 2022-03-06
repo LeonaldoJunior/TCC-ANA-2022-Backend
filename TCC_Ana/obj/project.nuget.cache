@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "V1Geku0muXKmRvgUkUaMA+a8UMmMaPfopxv+5g8GCT2Meh9NFAqiT3/qW82aeXwI1EBb3sDm4q1hn58eVLM6OA==",
+  "dgSpecHash": "Qvn+EsVC4WOYAnUrbILCOlSHMes7O9YuGTRmeB6D6nBytPwSkg0M8fie4Fy0XHzbK5vEgJWs/jxjQyYB0WYHEg==",
   "success": true,
-  "projectFilePath": "C:\\Backend\\TCC_Ana\\TCC_Ana\\TCC_Ana.csproj",
+  "projectFilePath": "C:\\TCC\\BACK-END\\TCC_ANA\\TCC_Ana\\TCC_Ana.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Junior\\.nuget\\packages\\atom.azureclient\\1.1.0\\atom.azureclient.1.1.0.nupkg.sha512",
     "C:\\Users\\Junior\\.nuget\\packages\\azure.core\\1.20.0\\azure.core.1.20.0.nupkg.sha512",

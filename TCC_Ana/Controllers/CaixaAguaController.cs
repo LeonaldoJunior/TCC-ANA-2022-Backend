@@ -9,11 +9,11 @@ namespace TCC_Ana.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WebHookController : ControllerBase
+    public class CaixaAguaController : ControllerBase
     {
         readonly IConfiguration _configuration;
         readonly IKeyvaultManagement _keyvaultManagement;
-        public  WebHookController(IConfiguration config, IKeyvaultManagement keyvaultManagement)
+        public CaixaAguaController(IConfiguration config, IKeyvaultManagement keyvaultManagement)
         {
             _configuration = config;
             _keyvaultManagement = keyvaultManagement;
@@ -22,7 +22,10 @@ namespace TCC_Ana.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_keyvaultManagement.RetrieveKeyVaultSecret("teste"));
+            using Context myContext = new Context(_configuration);
+
+            var caixaAguaList = myContext.CatalogoCaixas.ToList();
+            return Ok(caixaAguaList);
 
             //return Ok(VaultClient.GetSecret("LeonaldoTest").Value.Value);
         }

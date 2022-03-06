@@ -8439,11 +8439,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Backend\\TCC_Ana\\TCC_Ana\\TCC_Ana.csproj",
+      "projectUniqueName": "C:\\TCC\\BACK-END\\TCC_ANA\\TCC_Ana\\TCC_Ana.csproj",
       "projectName": "TCC_Ana",
-      "projectPath": "C:\\Backend\\TCC_Ana\\TCC_Ana\\TCC_Ana.csproj",
+      "projectPath": "C:\\TCC\\BACK-END\\TCC_ANA\\TCC_Ana\\TCC_Ana.csproj",
       "packagesPath": "C:\\Users\\Junior\\.nuget\\packages\\",
-      "outputPath": "C:\\Backend\\TCC_Ana\\TCC_Ana\\obj\\",
+      "outputPath": "C:\\TCC\\BACK-END\\TCC_ANA\\TCC_Ana\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Junior\\AppData\\Roaming\\NuGet\\NuGet.Config",
