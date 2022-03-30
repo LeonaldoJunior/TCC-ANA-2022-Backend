@@ -17,6 +17,7 @@ namespace TCC_Ana.DataModels
         }
 
         public DbSet<EndDeviceDb> EndDevices { get; set; }
+        //public DbSet<UserDevices> EndDevices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
