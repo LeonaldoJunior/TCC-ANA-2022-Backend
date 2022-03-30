@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using TCC_Ana.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Azure.Core;
-using Azure.Identity;
 using Microsoft.Azure.KeyVault;
+using Azure.Identity;
+using Azure.Core;
 
 namespace TCC_Ana
 {
@@ -25,11 +22,13 @@ namespace TCC_Ana
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
                 //.ConfigureAppConfiguration((context, config) =>
                 //{
                 //    var settings = config.Build();
-                //    var keyVaultEndpoint = settings["VaultUri"];
+                //    //var keyVaultEndpoint = settings["VaultUri"];
+                //    var keyVaultEndpoint = "https://kv-tcc-ana.vault.azure.net/";
+                
 
                 //    var keyVaultClient = new KeyVaultClient(async (authority, resource, scope) =>
                 //    {
@@ -46,7 +45,12 @@ namespace TCC_Ana
 
 
                 //}
-                //);
+                //)
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddSingleton<IKeyvaultManagement, KeyvaultManagement>();
+                });
+        
         
     }
 }
