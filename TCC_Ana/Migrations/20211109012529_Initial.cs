@@ -7,7 +7,7 @@ namespace TCC_Ana.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "EndDevices",
+                name: "EventsEndDevices",
                 columns: table => new
                 {
                     EventId = table.Column<int>(type: "int", nullable: false)
@@ -27,14 +27,14 @@ namespace TCC_Ana.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EndDevices", x => x.EventId);
+                    table.PrimaryKey("PK_EventsEndDevices", x => x.EventId);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EndDevices");
+                name: "EventsEndDevices");
         }
     }
 }

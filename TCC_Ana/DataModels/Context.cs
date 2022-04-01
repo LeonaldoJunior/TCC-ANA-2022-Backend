@@ -16,18 +16,22 @@ namespace TCC_Ana.DataModels
             _configuration = iConfig;
         }
 
-        public DbSet<CaixaAguaDb> CatalogoCaixas { get; set; }
-        public DbSet<EndDeviceDb> EndDevices { get; set; }
-        //public DbSet<UserDevices> EndDevices { get; set; }
+        public DbSet<EventsEndDevice> EventsEndDevices { get; set; }
+        public DbSet<WaterTankList> WaterTankLists { get; set; }
+        public DbSet<EndDeviceList> EndDeviceLists { get; set; }
+        public DbSet<UserDevices> UsersDevices { get; set; }
+        public DbSet<VolumeCalculation> VolumeCalculations { get; set; }
+
+        //public DbSet<UserDevices> EventsEndDevices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //string connectiontring = _configuration.GetValue<string>("kv-connectionstring-db-tcc-ana");
 
             //optionsBuilder.UseSqlServer(connectiontring);
-            //optionsBuilder.UseSqlServer("Data Source=mssqlaconnect.itmnetworks.net;Initial Catalog=1307_tcc_ana;Persist Security Info=True;User ID=1307_leonaldo;Password=Uq4amivb[w");
-            optionsBuilder.UseSqlServer("Data Source=DESKTOP-L5IFHFJ;Initial Catalog=tcc-ana;Integrated Security=True");
-            
+            optionsBuilder.UseSqlServer("Data Source=mssqlaconnect.itmnetworks.net;Initial Catalog=1307_tcc_ana;Persist Security Info=True;User ID=1307_leonaldo;Password=Uq4amivb[w");
+            //optionsBuilder.UseSqlServer("Data Source=DESKTOP-L5IFHFJ;Initial Catalog=tcc-ana;Integrated Security=True");
+
         }
 
     }

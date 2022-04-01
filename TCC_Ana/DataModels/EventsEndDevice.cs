@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TCC_Ana.DataModels
 {
-    public class EndDeviceDb
+    public class EventsEndDevice
     {
         [Key]
         public int EventId { get; set; }

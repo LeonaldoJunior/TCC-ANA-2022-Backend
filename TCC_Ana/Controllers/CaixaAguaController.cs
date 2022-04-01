@@ -8,7 +8,7 @@ using TCC_Ana.Services;
 namespace TCC_Ana.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]/[action]")]
     public class CaixaAguaController : ControllerBase
     {
         readonly IConfiguration _configuration;
@@ -20,26 +20,26 @@ namespace TCC_Ana.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
             using Context myContext = new Context(_configuration);
 
-            var caixaAguaList = myContext.CatalogoCaixas.ToList();
+            var caixaAguaList = myContext.WaterTankLists.ToList();
             return Ok(caixaAguaList);
 
             //return Ok(VaultClient.GetSecret("LeonaldoTest").Value.Value);
         }
 
 
-        [HttpGet("GetByIdMax/{id}")]
+        [HttpGet()]
         public IActionResult GetByIdMax(string id)
         {
             using Context myContext = new Context(_configuration);
 
-            //var events = myContext.EndDevices.Where(s => s.EndDeviceId == id).ToList();
-            //var events = myContext.EndDevices.Select(s => s.FirstOrDefault(w => w.));
+            //var events = myContext.EventsEndDevices.Where(s => s.EndDeviceId == id).ToList();
+            //var events = myContext.EventsEndDevices.Select(s => s.FirstOrDefault(w => w.));
 
-            var maxEvent = myContext.EndDevices.OrderByDescending(p => p.EventId).FirstOrDefault(x =>x.EndDeviceId == id);
+            var maxEvent = myContext.EventsEndDevices.OrderByDescending(p => p.EventId).FirstOrDefault(x =>x.EndDeviceId == id);
 
 
             return Ok(maxEvent);
@@ -54,7 +54,7 @@ namespace TCC_Ana.Controllers
 
 
             myContext.Add(
-            new EndDeviceDb()
+            new EventsEndDevice()
             {
                 EndDeviceId = endDeviceEvent.EndDeviceIds.DeviceId,
                 ApplicationId = endDeviceEvent.EndDeviceIds.ApplicationIds.ApplicationId,

@@ -65,7 +65,7 @@ namespace TCC_Ana.Migrations
 
                     b.HasKey("EventId");
 
-                    b.ToTable("EndDevices");
+                    b.ToTable("EventsEndDevices");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace TCC_Ana
 {
@@ -13,6 +15,8 @@ namespace TCC_Ana
         {
             Configuration = configuration;
         }
+
+
 
         public IConfiguration Configuration { get; }
 
@@ -25,11 +29,19 @@ namespace TCC_Ana
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TCC_Ana", Version = "v1" });
             });
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+
+            };
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+  
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
