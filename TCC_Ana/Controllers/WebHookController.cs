@@ -56,16 +56,12 @@ namespace TCC_Ana.Controllers
 
         // POST: WebHookController/
         [HttpPost]
-        public IActionResult Post([FromBody] EndDeviceEvent endDeviceEvent)
+        public void Post([FromBody] EndDeviceEvent endDeviceEvent)
         //public async Task<IActionResult> Post()
         {
             using Context myContext = new Context(_configuration);
 
-            if (!isNewDeviceID(endDeviceEvent.EndDeviceIds.DeviceId)) {
-                var newDevice = new EndDeviceList();
-                newDevice.EndDeviceId = endDeviceEvent.EndDeviceIds.DeviceId;
-                myContext.EndDeviceLists.Add(newDevice);
-            }
+
             var newEvent = new EventsEndDevice()
             {
                 EndDeviceId = endDeviceEvent.EndDeviceIds.DeviceId,
@@ -82,36 +78,49 @@ namespace TCC_Ana.Controllers
             };
 
             myContext.Add(newEvent);
-
-            var userDeviceWaterTank = (from waterTank in myContext.WaterTankLists
-                                       join userDevice in myContext.UsersDevices on waterTank.WaterTankId equals userDevice.WaterTankId
-                                       select new {
-                                           waterTank,
-                                           userDevice
-                                       }).FirstOrDefault();
-
-            var currentFluidHeight = fluidHeightCalculation(newEvent.AnalogIn2, userDeviceWaterTank.waterTank.Height);
-            
-            var currentVolume = VolumeCalculation(currentFluidHeight, userDeviceWaterTank.waterTank);
-
-            var currentVolumeCalculation = new VolumeCalculation();
-
-            currentVolumeCalculation.currentVolume = Convert.ToDecimal(currentVolume);
-            currentVolumeCalculation.EventId = newEvent.EventId;
-
-
-
-
             myContext.SaveChanges();
 
-            return Ok();
-        }
+            if (!isNewDeviceID(endDeviceEvent.EndDeviceIds.DeviceId))
+            {
+                var newDevice = new EndDeviceList();
+                newDevice.EndDeviceId = endDeviceEvent.EndDeviceIds.DeviceId;
+                myContext.EndDeviceList.Add(newDevice);
+                myContext.SaveChanges();
+            }
 
+
+            var userDeviceAndWaterTank = (from waterTank in myContext.WaterTankList
+                                           join userDevice in myContext.UsersAndDevices on waterTank.WaterTankId equals userDevice.WaterTankId
+                                           select new {
+                                               waterTank,
+                                               userDevice
+                                           }).FirstOrDefault();
+
+            if(userDeviceAndWaterTank.userDevice.EndDeviceID != "")
+            {
+                var currentFluidHeight = fluidHeightCalculation(newEvent.AnalogIn2, userDeviceAndWaterTank.waterTank.Height);
+            
+                var currentVolume = VolumeCalculation(currentFluidHeight, userDeviceAndWaterTank.waterTank);
+
+                var currentVolumeCalculation = new VolumeCalculation();
+
+                currentVolumeCalculation.CurrentVolume = currentVolume;
+                currentVolumeCalculation.EventId = newEvent.EventId;
+                currentVolumeCalculation.UsersAndDevicesId = userDeviceAndWaterTank.userDevice.UsersAndDevicesId;
+                currentVolumeCalculation.CurrentBatteryLevel = newEvent.AnalogIn2;
+
+                myContext.Add(currentVolumeCalculation);
+                myContext.SaveChanges();
+
+            }
+
+        }
         private bool isNewDeviceID(string endDeviceId)
         {
             using Context myContext = new Context(_configuration);
-            return myContext.EventsEndDevices.Where(e => e.EndDeviceId == endDeviceId).Any();
+            return myContext.UsersAndDevices.Where(e => e.EndDeviceID == endDeviceId).Any();
         }
+
 
         private double VolumeCalculation(double fluidHeight, WaterTankList waterTank)
         {
@@ -137,7 +146,6 @@ namespace TCC_Ana.Controllers
 
         private double fluidRadiusCalculation(double fluidHeight, WaterTankList waterTank)
         {
-            var height = Convert.ToDouble(waterTank.Height);
             var baseRadius = Convert.ToDouble(waterTank.BaseRadius);
             var topRadius = Convert.ToDouble(waterTank.TopRadius);
             var waterTankHeight = Convert.ToDouble(waterTank.Height);
@@ -147,36 +155,6 @@ namespace TCC_Ana.Controllers
         }
 
 
-        // POST: WebHookController/
-        [HttpPost]
-        public IActionResult NewUserDevice([FromForm] string deviceName, [FromForm] string deviceId, [FromForm] string selectedWaterTank)
-        //public async Task<IActionResult> Post()
-        {
-            var selectedWaterTankObj = JsonConvert.DeserializeObject<CaixaAguaModel>(selectedWaterTank);
 
-
-            //using Context myContext = new Context(_configuration);
-
-
-            //myContext.Add(
-            //new EndDeviceDb()
-            //{
-            //    EndDeviceId = endDeviceEvent.EndDeviceIds.DeviceId,
-            //    ApplicationId = endDeviceEvent.EndDeviceIds.ApplicationIds.ApplicationId,
-            //    DevEui = endDeviceEvent.EndDeviceIds.DevEui,
-            //    DevAddr = endDeviceEvent.EndDeviceIds.DevAddr,
-            //    GatewayId = endDeviceEvent.UplinkMessage.RxMetadata[0].GatewayIds.GatewayId,
-            //    GatewayEui = endDeviceEvent.UplinkMessage.RxMetadata[0].GatewayIds.Eui,
-            //    ReceivedAt = endDeviceEvent.UplinkMessage.ReceivedAt,
-            //    FPort = endDeviceEvent.UplinkMessage.FPort,
-            //    FrmPayload = endDeviceEvent.UplinkMessage.FrmPayload,
-            //    AnalogIn1 = endDeviceEvent.UplinkMessage.DecodedPayload.AnalogIn1,
-            //    AnalogIn2 = endDeviceEvent.UplinkMessage.DecodedPayload.AnalogIn2
-            //});
-
-            //myContext.SaveChanges();
-
-            return Ok();
-        }
     }
 }

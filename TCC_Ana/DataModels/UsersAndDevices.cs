@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace TCC_Ana.DataModels
 {
-    [Table("UserDevices")]
-    public class UserDevices
+    public class UsersAndDevices
     {
         [Key]
-        public int UserDeviceID { get; set; }
-        public int WaterTankId { get; set; }
+        public int UsersAndDevicesId { get; set; }
+        public string UserId { get; set; }
         public string EndDeviceID { get; set; }
+        public int WaterTankId { get; set; }
+        public string WaterTankName{ get; set; }
     }
 
 

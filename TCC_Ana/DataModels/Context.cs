@@ -17,12 +17,11 @@ namespace TCC_Ana.DataModels
         }
 
         public DbSet<EventsEndDevice> EventsEndDevices { get; set; }
-        public DbSet<WaterTankList> WaterTankLists { get; set; }
-        public DbSet<EndDeviceList> EndDeviceLists { get; set; }
-        public DbSet<UserDevices> UsersDevices { get; set; }
+        public DbSet<WaterTankList> WaterTankList { get; set; }
+        public DbSet<EndDeviceList> EndDeviceList { get; set; }
+        public DbSet<UserList> UserList { get; set; }
+        public DbSet<UsersAndDevices> UsersAndDevices { get; set; }
         public DbSet<VolumeCalculation> VolumeCalculations { get; set; }
-
-        //public DbSet<UserDevices> EventsEndDevices { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

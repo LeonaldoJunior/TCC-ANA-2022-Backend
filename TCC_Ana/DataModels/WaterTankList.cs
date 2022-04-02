@@ -13,11 +13,11 @@ namespace TCC_Ana.DataModels
         [Key]
         public int WaterTankId { get; set; }
         public string Brand { get; set; }
+        public int TheoVolume { get; set; }
         public decimal BaseRadius { get; set; }
         public decimal TopRadius { get; set; }
         public decimal Height { get; set; }
-        public decimal TheoVolume { get; set; }
-        public decimal MaxVolume { get; set; }
+        public double MaxVolume { get; set; }
     }
 
 }

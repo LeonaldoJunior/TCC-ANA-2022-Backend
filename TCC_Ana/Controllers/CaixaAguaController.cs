@@ -19,16 +19,6 @@ namespace TCC_Ana.Controllers
             _keyvaultManagement = keyvaultManagement;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            using Context myContext = new Context(_configuration);
-
-            var caixaAguaList = myContext.WaterTankLists.ToList();
-            return Ok(caixaAguaList);
-
-            //return Ok(VaultClient.GetSecret("LeonaldoTest").Value.Value);
-        }
 
 
         [HttpGet()]

@@ -9,9 +9,11 @@ namespace TCC_Ana.DataModels
     public class VolumeCalculation
     {
         [Key]
-        public int UserDeviceId { get; set; }
+        public int VolumeCalculationId { get; set; }
+        public int UsersAndDevicesId { get; set; }
         public int EventId { get; set; }
-        public decimal currentVolume { get; set; }
+        public double CurrentVolume { get; set; }
+        public double CurrentBatteryLevel { get; set; }
     }
 
 }

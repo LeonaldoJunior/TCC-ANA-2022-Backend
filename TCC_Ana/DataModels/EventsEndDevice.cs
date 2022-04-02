@@ -10,17 +10,12 @@ namespace TCC_Ana.DataModels
     {
         [Key]
         public int EventId { get; set; }
-
         public string EndDeviceId { get; set; }
-
         public string ApplicationId { get; set; }
         public string DevEui { get; set; }
         public string DevAddr { get; set; }
-
         public string GatewayId { get; set; }
         public string GatewayEui { get; set; }
-
-
         public string ReceivedAt { get; set; }
         public int FPort { get; set; }
         public int FCnt { get; set; }
