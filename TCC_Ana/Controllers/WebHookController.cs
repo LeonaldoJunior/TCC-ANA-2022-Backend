@@ -36,7 +36,7 @@ namespace TCC_Ana.Controllers
             //var events = myContext.EventsEndDevices.Where(s => s.EndDeviceId == id).ToList();
             //var events = myContext.EventsEndDevices.Select(s => s.FirstOrDefault(w => w.));
 
-            var maxEvent = myContext.EventsEndDevices.OrderByDescending(p => p.EventId).FirstOrDefault(x =>x.EndDeviceId == id);
+            var maxEvent = myContext.EventsEndDevice.OrderByDescending(p => p.EventId).FirstOrDefault(x =>x.EndDeviceId == id);
 
 
             return Ok(maxEvent);
@@ -47,7 +47,7 @@ namespace TCC_Ana.Controllers
         {
             using Context myContext = new Context(_configuration);
 
-            var allEvents = myContext.EventsEndDevices.Where(s => s.EndDeviceId == id).ToList();
+            var allEvents = myContext.EventsEndDevice.Where(s => s.EndDeviceId == id).ToList();
             //var events = myContext.EventsEndDevices.Select(s => s.FirstOrDefault(w => w.));
 
 
@@ -80,7 +80,7 @@ namespace TCC_Ana.Controllers
             myContext.Add(newEvent);
             myContext.SaveChanges();
 
-            if (!isNewDeviceID(endDeviceEvent.EndDeviceIds.DeviceId))
+            if (isNewDeviceID(endDeviceEvent.EndDeviceIds.DeviceId))
             {
                 var newDevice = new EndDeviceList();
                 newDevice.EndDeviceId = endDeviceEvent.EndDeviceIds.DeviceId;
@@ -91,12 +91,14 @@ namespace TCC_Ana.Controllers
 
             var userDeviceAndWaterTank = (from waterTank in myContext.WaterTankList
                                            join userDevice in myContext.UsersAndDevices on waterTank.WaterTankId equals userDevice.WaterTankId
-                                           select new {
+                                           where userDevice.EndDeviceID == newEvent.EndDeviceId
+                                          select new {
                                                waterTank,
                                                userDevice
-                                           }).FirstOrDefault();
+                                           }
+                                           ).FirstOrDefault();
 
-            if(userDeviceAndWaterTank.userDevice.EndDeviceID != "")
+            if(userDeviceAndWaterTank != null)
             {
                 var currentFluidHeight = fluidHeightCalculation(newEvent.AnalogIn2, userDeviceAndWaterTank.waterTank.Height);
             
@@ -107,7 +109,7 @@ namespace TCC_Ana.Controllers
                 currentVolumeCalculation.CurrentVolume = currentVolume;
                 currentVolumeCalculation.EventId = newEvent.EventId;
                 currentVolumeCalculation.UsersAndDevicesId = userDeviceAndWaterTank.userDevice.UsersAndDevicesId;
-                currentVolumeCalculation.CurrentBatteryLevel = newEvent.AnalogIn2;
+                currentVolumeCalculation.CurrentBatteryLevel = newEvent.AnalogIn1;
 
                 myContext.Add(currentVolumeCalculation);
                 myContext.SaveChanges();
@@ -118,7 +120,8 @@ namespace TCC_Ana.Controllers
         private bool isNewDeviceID(string endDeviceId)
         {
             using Context myContext = new Context(_configuration);
-            return myContext.UsersAndDevices.Where(e => e.EndDeviceID == endDeviceId).Any();
+            var endDeviceFound = !myContext.UsersAndDevices.Where(e => e.EndDeviceID == endDeviceId).Any();
+            return endDeviceFound;
         }
 
 

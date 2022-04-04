@@ -15,6 +15,7 @@ namespace TCC_Ana.DataModels
         public string EndDeviceID { get; set; }
         public int WaterTankId { get; set; }
         public string WaterTankName{ get; set; }
+        public bool isSelected { get; set; }
     }
 
 

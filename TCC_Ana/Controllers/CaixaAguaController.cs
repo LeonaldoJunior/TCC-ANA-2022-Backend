@@ -29,7 +29,7 @@ namespace TCC_Ana.Controllers
             //var events = myContext.EventsEndDevices.Where(s => s.EndDeviceId == id).ToList();
             //var events = myContext.EventsEndDevices.Select(s => s.FirstOrDefault(w => w.));
 
-            var maxEvent = myContext.EventsEndDevices.OrderByDescending(p => p.EventId).FirstOrDefault(x =>x.EndDeviceId == id);
+            var maxEvent = myContext.EventsEndDevice.OrderByDescending(p => p.EventId).FirstOrDefault(x =>x.EndDeviceId == id);
 
 
             return Ok(maxEvent);

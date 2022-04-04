@@ -16,12 +16,12 @@ namespace TCC_Ana.DataModels
             _configuration = iConfig;
         }
 
-        public DbSet<EventsEndDevice> EventsEndDevices { get; set; }
+        public DbSet<EventsEndDevice> EventsEndDevice { get; set; }
         public DbSet<WaterTankList> WaterTankList { get; set; }
         public DbSet<EndDeviceList> EndDeviceList { get; set; }
         public DbSet<UserList> UserList { get; set; }
         public DbSet<UsersAndDevices> UsersAndDevices { get; set; }
-        public DbSet<VolumeCalculation> VolumeCalculations { get; set; }
+        public DbSet<VolumeCalculation> VolumeCalculation { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
