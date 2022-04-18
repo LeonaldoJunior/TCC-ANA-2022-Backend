@@ -134,21 +134,19 @@ namespace TCC_Ana.Controllers
 
             if (fluidHeight > 0.02)
             {
+                return (Math.PI * fluidHeight) * (Math.Pow(baseRadius, 2) + (baseRadius * fluidRadius) + Math.Pow(fluidRadius, 2)) / 3;
+
+            }
+            else
+            {
                 if (fluidHeight > maxHeight)
                 {
                     return waterTank.TheoVolume;
                 }
                 else
                 {
-
-
-                    return (Math.PI * fluidHeight) * (Math.Pow(baseRadius, 2) + (baseRadius * fluidRadius) + Math.Pow(fluidRadius, 2)) / 3;
+                    return 0;
                 }
-
-            }
-            else
-            {
-                return 0;
             }
         }
 
