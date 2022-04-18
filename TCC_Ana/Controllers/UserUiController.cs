@@ -170,7 +170,6 @@ namespace TCC_Ana.Controllers
 
             //var usersDevices = myContext.VolumeCalculation.OrderByDescending(volumeCalc => volumeCalc.UsersAndDevicesId == id).ToList();
 
-
             var userDeviceAndWaterTank = (from volumeCalc in myContext.VolumeCalculation
                                           join userDevice in myContext.UsersAndDevices on volumeCalc.UsersAndDevicesId equals userDevice.UsersAndDevicesId
                                           join waterTank in myContext.WaterTankList on userDevice.WaterTankId equals waterTank.WaterTankId
@@ -193,6 +192,50 @@ namespace TCC_Ana.Controllers
             }
         }
 
+        [HttpGet()]
+        public IActionResult GetVolumeCalculationByUsersAndDevicesIdListFilterDay(int id, string lastDays)
+        {
+            using Context myContext = new Context(_configuration);
+
+            //var usersDevices = myContext.VolumeCalculation.OrderByDescending(volumeCalc => volumeCalc.UsersAndDevicesId == id).ToList();
+            var WhenSubmittedFilter = DateTime.Now.AddDays(-30);
+            if (!String.IsNullOrEmpty(lastDays))
+            {
+                var isNumeric = int.TryParse(lastDays, out int Days);
+                if(isNumeric)
+                {
+                    WhenSubmittedFilter = DateTime.Now.AddDays(-Days);
+                }
+            }
+
+            var teste = DateTime.Parse("2022-04-14T01:32:49.534735717Z");
+
+            var novoteste = DateTime.Parse("2022-04-14T01:32:49.534735717Z") >= WhenSubmittedFilter;
+
+            var userDeviceAndWaterTank = (from volumeCalc in myContext.VolumeCalculation
+                                          join userDevice in myContext.UsersAndDevices on volumeCalc.UsersAndDevicesId equals userDevice.UsersAndDevicesId
+                                          join waterTank in myContext.WaterTankList on userDevice.WaterTankId equals waterTank.WaterTankId
+                                          join eventsEndDevice in myContext.EventsEndDevice on volumeCalc.EventId equals eventsEndDevice.EventId
+                                          where DateTime.Parse(eventsEndDevice.ReceivedAt) >= WhenSubmittedFilter
+                                          select new
+                                          {
+                                              waterTank,
+                                              userDevice,
+                                              volumeCalc,
+                                              eventsEndDevice
+                                          }).OrderByDescending(x => x.volumeCalc.EventId).Take(24).ToList();
+
+            if (userDeviceAndWaterTank.Count > 0)
+            {
+                return Ok(userDeviceAndWaterTank);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        
 
         [HttpGet()]
         public IActionResult GetSelectedDeviceByUserId(string id)
