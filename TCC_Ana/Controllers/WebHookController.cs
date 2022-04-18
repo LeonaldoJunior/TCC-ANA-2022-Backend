@@ -116,6 +116,7 @@ namespace TCC_Ana.Controllers
 
             }
 
+
         }
         private bool isNewDeviceID(string endDeviceId)
         {
@@ -129,18 +130,27 @@ namespace TCC_Ana.Controllers
         {
             var baseRadius = Convert.ToDouble(waterTank.BaseRadius);
             var fluidRadius = fluidRadiusCalculation(fluidHeight, waterTank);
-                 
-            return (Math.PI * fluidHeight) * (Math.Pow(baseRadius, 2) + (baseRadius * fluidRadius) + Math.Pow(fluidRadius, 2)) / 3;
+            var maxHeight = Convert.ToDouble(waterTank.Height) - 0.06;
+
+            if (fluidHeight > 0.02)
+            {
+                return (Math.PI * fluidHeight) * (Math.Pow(baseRadius, 2) + (baseRadius * fluidRadius) + Math.Pow(fluidRadius, 2)) / 3;
+
+            }
+            else
+            {
+                if (fluidHeight > maxHeight)
+                {
+                    return waterTank.TheoVolume;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
 
-        private double MaxVolumeCalculation(double fluidHeigh, WaterTankList waterTank)
-        {
-            var height = Convert.ToDouble(waterTank.Height);
-            var baseRadius = Convert.ToDouble(waterTank.BaseRadius);
-            var topRadius = Convert.ToDouble(waterTank.TopRadius);
 
-            return ((Math.PI * height) * (Math.Pow(baseRadius, 2) + (baseRadius * topRadius) + Math.Pow(topRadius, 2)) / 3);
-        }
 
         private double fluidHeightCalculation(double sensorMeasure, decimal waterTankHeight)
         {

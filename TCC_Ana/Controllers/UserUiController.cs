@@ -42,9 +42,27 @@ namespace TCC_Ana.Controllers
             using Context myContext = new Context(_configuration);
 
             var watertankList = myContext.WaterTankList.ToList();
+
+            //watertankList.ForEach(waterTank => waterTank.MaxVolume = MaxVolumeCalculation(waterTank));
+            //myContext.SaveChanges();
+
+
+
             return Ok(watertankList);
 
             //return Ok(VaultClient.GetSecret("LeonaldoTest").Value.Value);
+        }
+
+        private double MaxVolumeCalculation(WaterTankList waterTank)
+        {
+            var height = Convert.ToDouble(waterTank.Height) - 0.08;
+            var baseRadius = Convert.ToDouble(waterTank.BaseRadius);
+            var topRadius = Convert.ToDouble(waterTank.TopRadius);
+
+            var volume = (((Math.PI * height)/3) * (Math.Pow(baseRadius, 2) + (baseRadius * topRadius) + Math.Pow(topRadius, 2)))*1000;
+
+            return volume;
+
         }
 
 
@@ -91,11 +109,23 @@ namespace TCC_Ana.Controllers
         {
             using Context myContext = new Context(_configuration);
 
-            var usersDevices = myContext.UsersAndDevices.Where(user => user.UserId == id).ToList();
+            //var usersDevices = myContext.UsersAndDevices.Where(user => user.UserId == id).ToList();
 
-            if(usersDevices.Count > 0)
+            var userDeviceAndWaterTank = (from userDevice in myContext.UsersAndDevices
+                                          where userDevice.UserId == id
+                                          join waterTank in myContext.WaterTankList on userDevice.WaterTankId equals waterTank.WaterTankId
+                                          select new
+                                          {
+                                              waterTank,
+                                              userDevice,
+                                          }).ToList();
+
+
+
+
+            if (userDeviceAndWaterTank.Count > 0)
             {
-                return Ok(usersDevices);
+                return Ok(userDeviceAndWaterTank);
             }
             else
             {
@@ -108,42 +138,83 @@ namespace TCC_Ana.Controllers
         {
             using Context myContext = new Context(_configuration);
 
-            var usersDevices = myContext.VolumeCalculation.OrderByDescending(volumeCalc => volumeCalc.UsersAndDevicesId == id).ToList();
+            //var usersDevices = myContext.VolumeCalculation.OrderByDescending(volumeCalc => volumeCalc.UsersAndDevicesId == id).ToList();
 
 
             var userDeviceAndWaterTank = (from volumeCalc in myContext.VolumeCalculation
                                           join userDevice in myContext.UsersAndDevices on volumeCalc.UsersAndDevicesId equals userDevice.UsersAndDevicesId
                                           join waterTank in myContext.WaterTankList on userDevice.WaterTankId equals waterTank.WaterTankId
+                                          join eventsEndDevice in myContext.EventsEndDevice on volumeCalc.EventId equals eventsEndDevice.EventId
                                           select new
                                           {
                                               waterTank,
                                               userDevice,
-                                              volumeCalc
+                                              volumeCalc,
+                                              eventsEndDevice
                                           }).OrderByDescending(x => x.volumeCalc.EventId).FirstOrDefault();
 
-
-
-            if (usersDevices.Count > 0)
+            if (userDeviceAndWaterTank != null)
             {
-                return Ok(usersDevices);
+                return Ok(userDeviceAndWaterTank);
             }
             else
             {
                 return NotFound();
             }
         }
-        
+
+        [HttpGet()]
+        public IActionResult GetVolumeCalculationByUsersAndDevicesIdList(int id)
+        {
+            using Context myContext = new Context(_configuration);
+
+            //var usersDevices = myContext.VolumeCalculation.OrderByDescending(volumeCalc => volumeCalc.UsersAndDevicesId == id).ToList();
+
+
+            var userDeviceAndWaterTank = (from volumeCalc in myContext.VolumeCalculation
+                                          join userDevice in myContext.UsersAndDevices on volumeCalc.UsersAndDevicesId equals userDevice.UsersAndDevicesId
+                                          join waterTank in myContext.WaterTankList on userDevice.WaterTankId equals waterTank.WaterTankId
+                                          join eventsEndDevice in myContext.EventsEndDevice on volumeCalc.EventId equals eventsEndDevice.EventId
+                                          select new
+                                          {
+                                              waterTank,
+                                              userDevice,
+                                              volumeCalc,
+                                              eventsEndDevice
+                                          }).OrderByDescending(x => x.volumeCalc.EventId).Take(24).ToList();
+
+            if (userDeviceAndWaterTank.Count > 0)
+            {
+                return Ok(userDeviceAndWaterTank);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
 
         [HttpGet()]
         public IActionResult GetSelectedDeviceByUserId(string id)
         {
             using Context myContext = new Context(_configuration);
 
-            var usersDevices = myContext.UsersAndDevices.Where(user => (user.UserId == id && user.isSelected == true)).FirstOrDefault();
+            //var usersDevices = myContext.UsersAndDevices.Where(user => (user.UserId == id && user.isSelected == true)).FirstOrDefault();
 
-            if (usersDevices != null)
+            var userDeviceAndWaterTank = (from userDevice in myContext.UsersAndDevices where userDevice.UserId == id && userDevice.isSelected == true
+                                          join waterTank in myContext.WaterTankList on userDevice.WaterTankId equals waterTank.WaterTankId
+                                          select new
+                                          {
+                                              waterTank,
+                                              userDevice,
+                                          }).FirstOrDefault();
+
+
+
+
+            if (userDeviceAndWaterTank != null)
             {
-                return Ok(usersDevices);
+                return Ok(userDeviceAndWaterTank);
             }
             else
             {
@@ -164,7 +235,14 @@ namespace TCC_Ana.Controllers
 
             if(usersDevices.Count > 1)
             {
-                return NoContent();
+                var deviceSelected = usersDevices.Find(user => user.isSelected = true);
+                deviceSelected.isSelected = false;
+
+                var deviceToChangeSelect = usersDevices.Find(user => user.UsersAndDevicesId == usersAndDevicesId);
+                deviceToChangeSelect.isSelected = true;
+
+                myContext.SaveChanges();
+                return Ok();
 
             }
             else
