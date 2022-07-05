@@ -46,6 +46,10 @@ namespace TCC_Ana.Controllers
             //watertankList.ForEach(waterTank => waterTank.MaxVolume = MaxVolumeCalculation(waterTank));
             //myContext.SaveChanges();
 
+            if (!watertankList.Any())
+            {
+                return NotFound();
+            }
 
 
             return Ok(watertankList);
@@ -53,20 +57,25 @@ namespace TCC_Ana.Controllers
             //return Ok(VaultClient.GetSecret("LeonaldoTest").Value.Value);
         }
 
-        private double MaxVolumeCalculation(WaterTankList waterTank)
-        {
-            var height = Convert.ToDouble(waterTank.Height) - 0.08;
-            var baseRadius = Convert.ToDouble(waterTank.BaseRadius);
-            var topRadius = Convert.ToDouble(waterTank.TopRadius);
-
-            var volume = (((Math.PI * height)/3) * (Math.Pow(baseRadius, 2) + (baseRadius * topRadius) + Math.Pow(topRadius, 2)))*1000;
-
-            return volume;
-
-        }
+        //private double MaxVolumeCalculation(WaterTankList waterTank)
+        //{
+        //    var baseRadius = Convert.ToDouble(waterTank.BaseRadius);
+        //    var topRadius = Convert.ToDouble(waterTank.TopRadius);
+        //    var height = Convert.ToDouble(waterTank.Height) - 0.08;
 
 
-        // POST: WebHookController/
+
+        //    if (waterTank.BaseRadius == waterTank.TopRadius)
+        //    {
+        //         height = Convert.ToDouble(waterTank.Height);
+        //    }
+        //    var volume = (((Math.PI * height) / 3) * (Math.Pow(baseRadius, 2) + (baseRadius * topRadius) + Math.Pow(topRadius, 2))) * 1000;
+
+
+        //    return volume;
+
+        //}
+
         [HttpPost]
         public IActionResult NewUserDevice([FromForm] string userId, [FromForm] string endDeviceID, [FromForm] int waterTankId, [FromForm] string waterTankName)
         //public async Task<IActionResult> Post()
@@ -102,7 +111,6 @@ namespace TCC_Ana.Controllers
             }
         }
 
-        
 
         [HttpGet()]
         public IActionResult GetAllDevicesByUserId(string id)
@@ -151,7 +159,7 @@ namespace TCC_Ana.Controllers
                                               userDevice,
                                               volumeCalc,
                                               eventsEndDevice
-                                          }).OrderByDescending(x => x.volumeCalc.EventId).FirstOrDefault();
+                                          }).Where(x => x.userDevice.UsersAndDevicesId == id).OrderByDescending(x => x.volumeCalc.EventId).FirstOrDefault();
 
             if (userDeviceAndWaterTank != null)
             {
@@ -181,7 +189,9 @@ namespace TCC_Ana.Controllers
                                               userDevice,
                                               volumeCalc,
                                               eventsEndDevice
-                                          }).OrderByDescending(x => x.volumeCalc.EventId).Take(24).ToList();
+                                          }).Where(x => x.userDevice.UsersAndDevicesId == id).OrderByDescending(x => x.volumeCalc.EventId).ToList(); ;
+
+
 
             if (userDeviceAndWaterTank.Count > 0)
             {
@@ -193,11 +203,55 @@ namespace TCC_Ana.Controllers
             }
         }
 
+        
+
+        [HttpGet()]
+        public IActionResult GetVolumeCalculationByUsersAndDevicesIdAndDate (int id, string lastDays)
+        {
+            using Context myContext = new Context(_configuration);
+
+            var whenSubmittedFilter = DateTime.Now;
+
+            if (!String.IsNullOrEmpty(lastDays))
+            {
+                var isNumeric = int.TryParse(lastDays, out int Days);
+                if (isNumeric)
+                {
+                    whenSubmittedFilter = DateTime.Now.AddDays(-Days);
+                }
+            }
+
+
+            //var usersDevices = myContext.VolumeCalculation.OrderByDescending(volumeCalc => volumeCalc.UsersAndDevicesId == id).ToList();
+
+            var userDeviceAndWaterTank = (from volumeCalc in myContext.VolumeCalculation
+                                          join userDevice in myContext.UsersAndDevices on volumeCalc.UsersAndDevicesId equals userDevice.UsersAndDevicesId
+                                          join waterTank in myContext.WaterTankList on userDevice.WaterTankId equals waterTank.WaterTankId
+                                          join eventsEndDevice in myContext.EventsEndDevice on volumeCalc.EventId equals eventsEndDevice.EventId
+                                          select new
+                                          {
+                                              waterTank,
+                                              userDevice,
+                                              volumeCalc,
+                                              eventsEndDevice
+                                          }).Where(x => ((x.eventsEndDevice.ReceivedAt.Date >= whenSubmittedFilter.Date) && (x.userDevice.UsersAndDevicesId == id))).ToList();
+
+
+
+            if (userDeviceAndWaterTank.Count > 0)
+            {
+                return Ok(userDeviceAndWaterTank);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
         [HttpGet()]
         public IActionResult GetSelectedDeviceByUserId(string id)
         {
-            using Context myContext = new Context(_configuration);
+             using Context myContext = new Context(_configuration);
 
             //var usersDevices = myContext.UsersAndDevices.Where(user => (user.UserId == id && user.isSelected == true)).FirstOrDefault();
 
@@ -218,7 +272,7 @@ namespace TCC_Ana.Controllers
             }
             else
             {
-                return NotFound();
+                return NotFound("ONDE VAI APARECER ISSO");
             }
         }
 
@@ -261,9 +315,12 @@ namespace TCC_Ana.Controllers
             using Context myContext = new Context(_configuration);
 
             var usersDevice = myContext.UsersAndDevices.Where(user => user.EndDeviceID == id).FirstOrDefault();
+            var volumeCalculation = myContext.VolumeCalculation.Where(volume => volume.UsersAndDevicesId == usersDevice.UsersAndDevicesId).ToList();
 
-            if(usersDevice.EndDeviceID != "")
+
+            if (usersDevice.EndDeviceID != "")
             {
+                myContext.VolumeCalculation.RemoveRange(volumeCalculation);
                 myContext.UsersAndDevices.Remove(usersDevice);
                 myContext.SaveChanges();
 

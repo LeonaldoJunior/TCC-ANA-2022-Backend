@@ -17,6 +17,7 @@ namespace TCC_Ana.DataModels
         public decimal BaseRadius { get; set; }
         public decimal TopRadius { get; set; }
         public decimal Height { get; set; }
+        public decimal CoverHeight { get; set; }
         public double MaxVolume { get; set; }
     }
 

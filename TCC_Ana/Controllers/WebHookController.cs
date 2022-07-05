@@ -70,7 +70,7 @@ namespace TCC_Ana.Controllers
                 DevAddr = endDeviceEvent.EndDeviceIds.DevAddr,
                 GatewayId = endDeviceEvent.UplinkMessage.RxMetadata[0].GatewayIds.GatewayId,
                 GatewayEui = endDeviceEvent.UplinkMessage.RxMetadata[0].GatewayIds.Eui,
-                ReceivedAt = endDeviceEvent.UplinkMessage.ReceivedAt,
+                ReceivedAt = Convert.ToDateTime(endDeviceEvent.UplinkMessage.ReceivedAt),
                 FPort = endDeviceEvent.UplinkMessage.FPort,
                 FrmPayload = endDeviceEvent.UplinkMessage.FrmPayload,
                 AnalogIn1 = endDeviceEvent.UplinkMessage.DecodedPayload.AnalogIn1,
@@ -100,9 +100,9 @@ namespace TCC_Ana.Controllers
 
             if(userDeviceAndWaterTank != null)
             {
-                var currentFluidHeight = fluidHeightCalculation(newEvent.AnalogIn2, userDeviceAndWaterTank.waterTank.Height);
+                var currentFluidHeight = fluidHeightCalculation(newEvent.AnalogIn2, userDeviceAndWaterTank.waterTank);
             
-                var currentVolume = VolumeCalculation(currentFluidHeight, userDeviceAndWaterTank.waterTank);
+                var currentVolume = VolumeCalculation(currentFluidHeight, userDeviceAndWaterTank.waterTank, newEvent.AnalogIn2);
 
                 var currentVolumeCalculation = new VolumeCalculation();
 
@@ -126,35 +126,34 @@ namespace TCC_Ana.Controllers
         }
 
 
-        private double VolumeCalculation(double fluidHeight, WaterTankList waterTank)
+        private double VolumeCalculation(double fluidHeight, WaterTankList waterTank, double sensorMeasure)
         {
             var baseRadius = Convert.ToDouble(waterTank.BaseRadius);
             var fluidRadius = fluidRadiusCalculation(fluidHeight, waterTank);
             var maxHeight = Convert.ToDouble(waterTank.Height) - 0.06;
 
+
             if (fluidHeight > 0.02)
             {
+                if ((fluidHeight > (maxHeight)) || sensorMeasure <= 0.22)
+                {
+                    return waterTank.TheoVolume/1000.0;
+                }
+
                 return (Math.PI * fluidHeight) * (Math.Pow(baseRadius, 2) + (baseRadius * fluidRadius) + Math.Pow(fluidRadius, 2)) / 3;
 
             }
             else
             {
-                if (fluidHeight > maxHeight)
-                {
-                    return waterTank.TheoVolume;
-                }
-                else
-                {
-                    return 0;
-                }
+                return 0;
             }
         }
 
 
 
-        private double fluidHeightCalculation(double sensorMeasure, decimal waterTankHeight)
+        private double fluidHeightCalculation(double sensorMeasure, WaterTankList waterTank)
         {
-            return Convert.ToDouble(waterTankHeight) - sensorMeasure;
+            return  Convert.ToDouble(waterTank.Height) + Convert.ToDouble(waterTank.CoverHeight) - sensorMeasure;
         }
 
         private double fluidRadiusCalculation(double fluidHeight, WaterTankList waterTank)

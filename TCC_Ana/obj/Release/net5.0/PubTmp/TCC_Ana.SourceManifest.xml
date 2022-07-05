@@ -1,4 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <sitemanifest>
-  <IisApp path="C:\TCC\BACK-END\TCC_ANA\TCC_Ana\obj\Release\net5.0\PubTmp\Out\" />
+  <IisApp path="C:\dev\backend\TCC_ANA\TCC_Ana\obj\Release\net5.0\PubTmp\Out\" />
 </sitemanifest>

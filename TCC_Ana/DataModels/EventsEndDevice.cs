@@ -16,7 +16,7 @@ namespace TCC_Ana.DataModels
         public string DevAddr { get; set; }
         public string GatewayId { get; set; }
         public string GatewayEui { get; set; }
-        public string ReceivedAt { get; set; }
+        public DateTime ReceivedAt { get; set; }
         public int FPort { get; set; }
         public int FCnt { get; set; }
         public string FrmPayload { get; set; }
